@@ -70,7 +70,7 @@ ini_set('display_errors', '1');
         <div>
             <h3 class="border-bottom-gray">Projects</h3>
             <div class="project">
-                <h5>Project X</h5>
+
 
                 <?php
             $totalmonths =0;

@@ -1,6 +1,7 @@
 <?php
-  require'app/Models/Job.php';
-  require'app/Models/Project.php';
+  require_once'vendor/autoload.php';
+
+  use app\Models\{Job, Project, Printable};
   $name ="Josué Fuentes";
   $limitmonths =35;
 
@@ -19,10 +20,10 @@
       $job2,
       $job3
     ];
-  $proects = [
+  $projects = [
     $project1
   ];
-    function printElement($job){
+    function printElement(Printable $job){
       if(!$job->getVisible()){
         return;
       }
