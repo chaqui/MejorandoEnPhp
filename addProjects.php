@@ -4,7 +4,7 @@ ini_set('display_errors', '1');
 
 require_once'vendor/autoload.php';
 use Illuminate\Database\Capsule\Manager as Capsule;
-use app\Models\Job;
+use app\Models\Project;
 $capsule = new Capsule;
 
 $capsule->addConnection([
@@ -24,11 +24,11 @@ $capsule->setAsGlobal();
 // Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
 $capsule->bootEloquent();
 
-$job = new Job();
+$project = new Project();
 if(!empty($_POST)){
-  $job->title = $_POST["Title"];
-  $job->description = $_POST["Description"];
-  $job->save();
+  $project->title = $_POST["Title"];
+  $project->description = $_POST["Description"];
+  $project->save();
 }
 
 ?>
@@ -43,11 +43,11 @@ if(!empty($_POST)){
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
     crossorigin="anonymous">
   <link rel="stylesheet" href="style.css">
-  <title>Add Job</title>
+  <title>Add Project</title>
 </head>
 <body>
-  <h1>Add Job.</h1>
-  <form action="addJob.php" method="POST">
+  <h1>Add Project.</h1>
+  <form action="addProjects.php" method="POST">
     <label for="">Title:</label>
     <input type="text" name="Title" id=""> <br>
     <label for="">Description:</label>
