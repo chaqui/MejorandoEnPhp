@@ -1,11 +1,11 @@
 <?php
-namespace App\Controllers;
+namespace app\Controllers;
 
 use app\Models\Job;
-class JobsController{
+class JobsController extends BaseController{
   public function getAddJobAction()
   {
-    include '../views/addJob.php';
+    echo $this->renderHtml('addJob.twig');
   }
   public function postAddJobAction($request)
   {

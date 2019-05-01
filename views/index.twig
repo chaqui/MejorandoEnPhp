@@ -23,7 +23,7 @@
         <img id="profile-picture" src="https://ui-avatars.com/api/?name=John+Doe&size=255" alt="">
       </div>
       <div class="col">
-        <h1><?php echo $name?></h1>
+        <h1>{{name}}</h1>
         <h2>PHP Developer</h2>
         <ul>
           <li>Mail: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8fe7eaecfbe0fdcfe2eee6e3a1ece0e2">[email&#160;protected]</a></li>
@@ -47,10 +47,8 @@
         <div>
           <h3 class="border-bottom-gray" >Work Experience</h3>
           <ul>
-            <?php
-            $totalmonths =0;
-
-              foreach($jobs as $job)
+            {% for job in jobs %}
+              
               {
 
                 $totalmonths +=$job->months;
@@ -60,7 +58,8 @@
                 }
                 printElement($job);
               }
-              ?>
+              {% endfor %}
+              
           </ul>
         </div>
         <div>
