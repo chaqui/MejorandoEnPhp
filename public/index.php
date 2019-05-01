@@ -5,6 +5,9 @@
 
   require_once'../vendor/autoload.php';
   use Illuminate\Database\Capsule\Manager as Capsule;
+  use Aura\Router\RouterContainer;
+
+
   $capsule = new Capsule;
 
   $capsule->addConnection([
@@ -31,6 +34,24 @@
     $_COOKIE,
     $_FILES
   );
-  echo "hola mundo";
-  echo var_dump($request->getUri()->getPath());
+  $routerContainer = new RouterContainer();
+  $map = $routerContainer->getMap();
+  //determinación de la ruta
+  $map->get('index','/platzi/',[
+    'controller'=>'app\Controllers\IndexController',
+    'action'=>'indexAction']);
+  $map->get('addJobs','/platzi/jobs/add','../addJob.php');
+
+  $matcher = $routerContainer->getMatcher();
+  $route = $matcher->match($request);
+  if(!$route){
+    echo "No route ";
+  }
+  else{
+    $handlerData = $route->handler;
+    $controllerName = $handlerData['controller'];
+    $actionName = $handlerData['action'];
+    $controller= new $controllerName;
+    $controller-> $actionName();
+  }
 ?>
