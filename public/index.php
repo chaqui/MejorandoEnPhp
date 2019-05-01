@@ -7,6 +7,22 @@
   use Illuminate\Database\Capsule\Manager as Capsule;
   use Aura\Router\RouterContainer;
 
+  function printElement( $job){
+    // if(!$job->getVisible()){
+    //   return;
+    // }
+    echo '<li class="work-position">';
+    echo " <h5>".$job->title."</h5>";
+    echo " <p>".$job->description ."</p>";
+    echo " <p>".$job->getDurationAsString() ."</p>";
+    echo '<strong>Achievements:</strong>';
+    echo ' <ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
 
   $capsule = new Capsule;
 
@@ -40,7 +56,13 @@
   $map->get('index','/platzi/',[
     'controller'=>'app\Controllers\IndexController',
     'action'=>'indexAction']);
-  $map->get('addJobs','/platzi/jobs/add','../addJob.php');
+
+  $map->get('addJobs','/platzi/jobs/add',[
+    'controller'=>'app\Controllers\JobsController',
+    'action'=>'getAddJobAction']);
+    $map->post('saveJobs','/platzi/jobs/add',[
+      'controller'=>'app\Controllers\JobsController',
+      'action'=>'postAddJobAction']);
 
   $matcher = $routerContainer->getMatcher();
   $route = $matcher->match($request);
@@ -52,6 +74,6 @@
     $controllerName = $handlerData['controller'];
     $actionName = $handlerData['action'];
     $controller= new $controllerName;
-    $controller-> $actionName();
+    $controller-> $actionName($request);
   }
 ?>

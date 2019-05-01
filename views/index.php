@@ -2,12 +2,7 @@
 
 <!doctype html>
 <html lang="en">
-<?php
-use app\Models\Job;
 
-
-  require_once('jobs.php');
-  ?>
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">

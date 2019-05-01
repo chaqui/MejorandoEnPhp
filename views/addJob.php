@@ -1,18 +1,3 @@
-<?php
-
-use app\Models\Job;
-
-
-if(!empty($_POST)){
-  $job = new Job();
-  $job->title = $_POST["Title"];
-  $job->description = $_POST["Description"];
-  $job->save();
-}
-
-?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,7 +11,7 @@ if(!empty($_POST)){
 </head>
 <body>
   <h1>Add Job.</h1>
-  <form action="addJob.php" method="POST">
+  <form action="/platzi/jobs/add" method="POST">
     <label for="">Title:</label>
     <input type="text" name="Title" id=""> <br>
     <label for="">Description:</label>
