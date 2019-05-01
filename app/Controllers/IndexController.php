@@ -9,9 +9,10 @@ class IndexController extends BaseController{
     $jobs = Job::all();
     $projects = Project::all();
 
-    echo $this->renderHTML('index.twig',[
+    return $this->renderHTML('index.twig',[
       'name'=>$name,
-      'jobs'=>$jobs
+      'jobs'=>$jobs,
+      'projects'=>$projects
       ]);
   }
 }

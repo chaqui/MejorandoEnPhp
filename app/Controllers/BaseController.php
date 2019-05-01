@@ -1,7 +1,8 @@
 <?php
 namespace app\Controllers;
 
-class BaseController 
+use Zend\Diactoros\Response\HtmlResponse;
+class BaseController
 {
   protected $templateEngine;
   public function __construct(){
@@ -14,7 +15,8 @@ class BaseController
   }
 
   public function renderHtml($fileName, $data =[]){
-    return $this->templateEngine->render($fileName,$data);
+    return new HtMlResponse( $this->templateEngine->render($fileName,$data));
   }
+
 }
 

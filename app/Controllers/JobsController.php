@@ -5,17 +5,17 @@ use app\Models\Job;
 class JobsController extends BaseController{
   public function getAddJobAction()
   {
-    echo $this->renderHtml('addJob.twig');
+    return $this->renderHtml('addJob.twig');
   }
   public function postAddJobAction($request)
   {
     
     if(empty($request->getMethod() == 'POST')){
       $data = $request->getParseBody();
-      $job->title = $data["Title"];
+      $job->title = $data[" Title"];
       $job->description = $data["Description"];
       $job->save();
     }
-    include '../views/addJob.php';
+    return $this->renderHtml('addJob.twig');
   }
 }

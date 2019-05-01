@@ -48,34 +48,35 @@
           <h3 class="border-bottom-gray" >Work Experience</h3>
           <ul>
             {% for job in jobs %}
-              
-              {
-
-                $totalmonths +=$job->months;
-
-                if($totalmonths > $limitmonths){
-                  break;
-                }
-                printElement($job);
-              }
+          <li class="work-position">
+          <h5>{{job.title}}</h5>
+          <p>{{job.description}} </p>
+            <strong>Achievements:</strong>
+            <ul>
+            <li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>
+            <li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>
+            <li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>
+            </ul>
+            </li>
               {% endfor %}
-              
           </ul>
         </div>
         <div>
             <h3 class="border-bottom-gray">Projects</h3>
             <div class="project">
 
-
-                <?php
-            $totalmonths =0;
-
-              foreach($projects as $project)
-              {
-
-                printElement($project);
-              }
-              ?>
+               {% for project in projects %}
+                <li class="work-position">
+                  <h5>{{project.title}}</h5>
+                  <p>{{project.description}} </p>
+                  <strong>Achievements:</strong>
+                  <ul>
+                    <li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>
+                    <li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>
+                    <li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>
+                  </ul>
+                </li>
+              {% endfor %}
                 <div class="row">
                     <div class="col-3">
                         <img id="profile-picture" src="https://ui-avatars.com/api/?name=John+Doe&size=255" alt="">
