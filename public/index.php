@@ -53,17 +53,30 @@
   $routerContainer = new RouterContainer();
   $map = $routerContainer->getMap();
   //determinación de la ruta
-  $map->get('index','/platzi/',[
-    'controller'=>'app\Controllers\IndexController',
-    'action'=>'indexAction']);
+    $map->get('index','/platzi/',[
+      'controller'=>'app\Controllers\IndexController',
+      'action'=>'indexAction']);
 
-  $map->get('addJobs','/platzi/jobs/add',[
-    'controller'=>'app\Controllers\JobsController',
-    'action'=>'getAddJobAction']);
+    $map->get('addJobs','/platzi/jobs/add',[
+      'controller'=>'app\Controllers\JobsController',
+      'action'=>'getAddJobAction']);
     $map->post('saveJobs','/platzi/jobs/add',[
       'controller'=>'app\Controllers\JobsController',
       'action'=>'postAddJobAction']);
 
+    $map->get('addUsers','/platzi/users/add',[
+        'controller'=>'app\Controllers\UsersController',
+        'action'=>'getAddUserAction']);
+    $map->post('saveUsers','/platzi/users/add',[
+      'controller'=>'app\Controllers\UsersController',
+      'action'=>'postAddUserAction']);
+
+    $map->get('loginForm','/platzi/login',[
+      'controller'=>'app\Controllers\AuthController',
+      'action'=>'getLogin']);
+    $map->post('authLogin','/platzi/auth',[
+        'controller'=>'app\Controllers\AuthController',
+        'action'=>'postLogin']);
   $matcher = $routerContainer->getMatcher();
   $route = $matcher->match($request);
   if(!$route){
@@ -75,7 +88,12 @@
     $actionName = $handlerData['action'];
     $controller= new $controllerName;
     $response = $controller-> $actionName($request);
-
+    foreach($response->getHeaders() as $name =>$values){
+      foreach ($values as $value) {
+        header(sprintf('%s %s', $name, $value),false);
+      }
+    }
+    http_response_code($response->getStatusCode());
     echo $response->getBody();
   }
 ?>
