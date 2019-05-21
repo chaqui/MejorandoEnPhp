@@ -18,6 +18,7 @@ class AuthController extends BaseController
       if($user)
       {
         if(password_verify($postData["contrasenia"], $user->password)){
+          $_SESSION['user_id']= $user->iduser;
           return new RedirectResponse('/platzi/admin');
         }
         else{
@@ -33,5 +34,10 @@ class AuthController extends BaseController
       return $this->renderHtml('login.twig',[
         'responseMessage'=>$responseMessage
       ]);
+    }
+    public function getLogout()
+    {
+      unset($_SESSION['user_id']);
+      return new RedirectResponse('/platzi/login');
     }
 }

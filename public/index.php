@@ -4,25 +4,11 @@
   error_reporting(E_ALL);
 
   require_once'../vendor/autoload.php';
+
+  session_start();
   use Illuminate\Database\Capsule\Manager as Capsule;
   use Aura\Router\RouterContainer;
-
-  function printElement( $job){
-    // if(!$job->getVisible()){
-    //   return;
-    // }
-    echo '<li class="work-position">';
-    echo " <h5>".$job->title."</h5>";
-    echo " <p>".$job->description ."</p>";
-    echo " <p>".$job->getDurationAsString() ."</p>";
-    echo '<strong>Achievements:</strong>';
-    echo ' <ul>';
-    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
-    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
-    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
-    echo '</ul>';
-    echo '</li>';
-  }
+  use Zend\Diactoros\Response\RedirectResponse;
 
   $capsule = new Capsule;
 
@@ -57,19 +43,30 @@
       'controller'=>'app\Controllers\IndexController',
       'action'=>'indexAction']);
 
+    $map->get('indexJobs','/platzi/jobs/',[
+      'controller'=>'app\Controllers\JobsController',
+      'action'=>'indexAction']);
+
+     $map->get('deleteJobs','/platzi/jobs/delete',[
+      'controller'=>'app\Controllers\JobsController',
+      'action'=>'deleteAction']);
     $map->get('addJobs','/platzi/jobs/add',[
       'controller'=>'app\Controllers\JobsController',
-      'action'=>'getAddJobAction']);
+      'action'=>'getAddJobAction',
+      'auth'=>true]);
     $map->post('saveJobs','/platzi/jobs/add',[
       'controller'=>'app\Controllers\JobsController',
-      'action'=>'postAddJobAction']);
+      'action'=>'postAddJobAction',
+      'auth'=>true]);
 
     $map->get('addUsers','/platzi/users/add',[
         'controller'=>'app\Controllers\UsersController',
-        'action'=>'getAddUserAction']);
+        'action'=>'getAddUserAction',
+        'auth'=>true]);
     $map->post('saveUsers','/platzi/users/add',[
       'controller'=>'app\Controllers\UsersController',
-      'action'=>'postAddUserAction']);
+      'action'=>'postAddUserAction',
+      'auth'=>true]);
 
     $map->get('loginForm','/platzi/login',[
       'controller'=>'app\Controllers\AuthController',
@@ -77,6 +74,16 @@
     $map->post('authLogin','/platzi/auth',[
         'controller'=>'app\Controllers\AuthController',
         'action'=>'postLogin']);
+
+    $map->get('admin','/platzi/admin',[
+      'controller'=>'app\Controllers\AdminController',
+      'action'=>'getIndex',
+      'auth'=>true]);
+    
+    $map->get('logout','/platzi/logout',[
+      'controller'=>'app\Controllers\AuthController',
+      'action'=>'getLogout',
+      'auth'=>true]);
   $matcher = $routerContainer->getMatcher();
   $route = $matcher->match($request);
   if(!$route){
@@ -86,13 +93,25 @@
     $handlerData = $route->handler;
     $controllerName = $handlerData['controller'];
     $actionName = $handlerData['action'];
-    $controller= new $controllerName;
-    $response = $controller-> $actionName($request);
+    $needsAuth = $handlerData['auth'] ?? false;
+
+    $sessionUserID = $_SESSION['user_id'] ?? null;
+    if($needsAuth && !$sessionUserID )
+    {
+      $response =  new RedirectResponse('/platzi/login');
+    }
+    else
+    {
+      $controller= new $controllerName;
+      $response = $controller-> $actionName($request);
+    }
+    
     foreach($response->getHeaders() as $name =>$values){
       foreach ($values as $value) {
-        header(sprintf('%s %s', $name, $value),false);
+        header(sprintf('%s: %s', $name, $value),false);
       }
     }
+    
     http_response_code($response->getStatusCode());
     echo $response->getBody();
   }

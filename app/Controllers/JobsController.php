@@ -3,10 +3,25 @@ namespace app\Controllers;
 
 use app\Models\Job;
 use Respect\Validation\Validator as v;
+use Zend\Diactoros\ServerRequest;
+use Zend\Diactoros\Response\RedirectResponse;
+
 class JobsController extends BaseController{
   public function getAddJobAction()
   {
     return $this->renderHtml('addJob.twig');
+  }
+
+  public function indexAction(){
+    $jobs = Job::all();
+    return $this->renderHtml('jobs/index.twig', compact('jobs'));
+  }
+
+  public function deleteAction(ServerRequest $request){
+    $params = $request->getQueryParams();
+    $job = Job::where('idjobs',$params['idjobs']);
+    $job->delete();
+    return new RedirectResponse('/platzi/jobs/');
   }
   public function postAddJobAction($request)
   {
@@ -40,4 +55,6 @@ class JobsController extends BaseController{
       'responseMessage'=>$responseMessage
     ]);
   }
+
+
 }
