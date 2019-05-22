@@ -14,6 +14,8 @@
 use WoohooLabs\Harmony\Middleware\DispatcherMiddleware;
 use WoohooLabs\Harmony\Middleware\HttpHandlerRunnerMiddleware;
 use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
+use app\Middlewares\AuthenticationMiddleware;
+
 $capsule = new Capsule;
   $container = new DI\Container();
   $capsule->addConnection([
@@ -105,6 +107,7 @@ $capsule = new Capsule;
     $harmony = new Harmony($request, new Response());
     $harmony
     ->addMiddleware(new HttpHandlerRunnerMiddleware(new SapiEmitter()))
+    ->addMiddleware(new AuthenticationMiddleware($routerContainer))
     ->addMiddleware(new Middlewares\AuraRouter($routerContainer))
     ->addMiddleware(new DispatcherMiddleware($container, 'request-handler'));
     $harmony();
