@@ -9,9 +9,13 @@
   use Illuminate\Database\Capsule\Manager as Capsule;
   use Aura\Router\RouterContainer;
   use Zend\Diactoros\Response\RedirectResponse;
-
-  $capsule = new Capsule;
-
+  use WoohooLabs\Harmony\Harmony;
+  use Zend\Diactoros\Response;
+use WoohooLabs\Harmony\Middleware\DispatcherMiddleware;
+use WoohooLabs\Harmony\Middleware\HttpHandlerRunnerMiddleware;
+use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
+$capsule = new Capsule;
+  $container = new DI\Container();
   $capsule->addConnection([
       'driver'    => 'mysql',
       'host'      => 'localhost',
@@ -40,49 +44,49 @@
   $map = $routerContainer->getMap();
   //determinación de la ruta
     $map->get('index','/platzi/',[
-      'controller'=>'app\Controllers\IndexController',
-      'action'=>'indexAction']);
+      'app\Controllers\IndexController',
+      'indexAction']);
 
     $map->get('indexJobs','/platzi/jobs/',[
-      'controller'=>'app\Controllers\JobsController',
-      'action'=>'indexAction']);
+      'app\Controllers\JobsController',
+      'indexAction']);
 
      $map->get('deleteJobs','/platzi/jobs/delete',[
-      'controller'=>'app\Controllers\JobsController',
-      'action'=>'deleteAction']);
+      'app\Controllers\JobsController',
+      'deleteAction']);
     $map->get('addJobs','/platzi/jobs/add',[
-      'controller'=>'app\Controllers\JobsController',
-      'action'=>'getAddJobAction',
+      'app\Controllers\JobsController',
+      'getAddJobAction',
       'auth'=>true]);
     $map->post('saveJobs','/platzi/jobs/add',[
-      'controller'=>'app\Controllers\JobsController',
-      'action'=>'postAddJobAction',
+      'app\Controllers\JobsController',
+      'postAddJobAction',
       'auth'=>true]);
 
     $map->get('addUsers','/platzi/users/add',[
-        'controller'=>'app\Controllers\UsersController',
-        'action'=>'getAddUserAction',
+        'app\Controllers\UsersController',
+        'getAddUserAction',
         'auth'=>true]);
     $map->post('saveUsers','/platzi/users/add',[
-      'controller'=>'app\Controllers\UsersController',
-      'action'=>'postAddUserAction',
+      'app\Controllers\UsersController',
+      'postAddUserAction',
       'auth'=>true]);
 
     $map->get('loginForm','/platzi/login',[
-      'controller'=>'app\Controllers\AuthController',
-      'action'=>'getLogin']);
+      'app\Controllers\AuthController',
+      'getLogin']);
     $map->post('authLogin','/platzi/auth',[
-        'controller'=>'app\Controllers\AuthController',
-        'action'=>'postLogin']);
+        'app\Controllers\AuthController',
+        'postLogin']);
 
     $map->get('admin','/platzi/admin',[
-      'controller'=>'app\Controllers\AdminController',
-      'action'=>'getIndex',
+      'app\Controllers\AdminController',
+      'getIndex',
       'auth'=>true]);
-    
+
     $map->get('logout','/platzi/logout',[
-      'controller'=>'app\Controllers\AuthController',
-      'action'=>'getLogout',
+      'app\Controllers\AuthController',
+      'getLogout',
       'auth'=>true]);
   $matcher = $routerContainer->getMatcher();
   $route = $matcher->match($request);
@@ -91,8 +95,6 @@
   }
   else{
     $handlerData = $route->handler;
-    $controllerName = $handlerData['controller'];
-    $actionName = $handlerData['action'];
     $needsAuth = $handlerData['auth'] ?? false;
 
     $sessionUserID = $_SESSION['user_id'] ?? null;
@@ -100,19 +102,12 @@
     {
       $response =  new RedirectResponse('/platzi/login');
     }
-    else
-    {
-      $controller= new $controllerName;
-      $response = $controller-> $actionName($request);
-    }
-    
-    foreach($response->getHeaders() as $name =>$values){
-      foreach ($values as $value) {
-        header(sprintf('%s: %s', $name, $value),false);
-      }
-    }
-    
-    http_response_code($response->getStatusCode());
-    echo $response->getBody();
+    $harmony = new Harmony($request, new Response());
+    $harmony
+    ->addMiddleware(new HttpHandlerRunnerMiddleware(new SapiEmitter()))
+    ->addMiddleware(new Middlewares\AuraRouter($routerContainer))
+    ->addMiddleware(new DispatcherMiddleware($container, 'request-handler'));
+    $harmony();
+
   }
 ?>
