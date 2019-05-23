@@ -28,7 +28,7 @@ class JobsController extends BaseController{
 
   public function deleteAction(ServerRequest $request){
     $params = $request->getQueryParams();
-    $this->jobServices->deleteJob($params['idjobs']);
+    $this->jobService->deleteJob($params['idjobs']);
     return new RedirectResponse('/platzi/jobs/');
   }
   public function postAddJobAction($request)

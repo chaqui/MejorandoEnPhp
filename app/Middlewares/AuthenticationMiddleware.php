@@ -20,7 +20,7 @@ class AuthenticationMiddleware implements MiddlewareInterface
    */
   public function __construct( $router)
   {
-    $this->routes = $router;
+    $this->routes = $router;  
   }
 
   /**
@@ -33,10 +33,12 @@ class AuthenticationMiddleware implements MiddlewareInterface
    */
   public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
   {
+
     if($this->rutaAuntenticada($request)){
-      $sessionUserId = $_SESSION['userId']?? null;
+      $sessionUserId = $_SESSION['user_id']?? null;
       if(!$sessionUserId)
       {
+         
           return new EmptyResponse(401);
       }
 

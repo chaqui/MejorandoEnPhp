@@ -15,6 +15,8 @@ use WoohooLabs\Harmony\Middleware\DispatcherMiddleware;
 use WoohooLabs\Harmony\Middleware\HttpHandlerRunnerMiddleware;
 use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
 use app\Middlewares\AuthenticationMiddleware;
+use Aura\Router\Exception;
+use Franzl\Middleware\Whoops\WhoopsMiddleware;
 
 $capsule = new Capsule;
   $container = new DI\Container();
@@ -51,7 +53,8 @@ $capsule = new Capsule;
 
     $map->get('indexJobs','/platzi/jobs/',[
       'app\Controllers\JobsController',
-      'indexAction']);
+      'indexAction',
+      'auth'=>true]);
 
      $map->get('deleteJobs','/platzi/jobs/delete',[
       'app\Controllers\JobsController',
@@ -96,21 +99,24 @@ $capsule = new Capsule;
     echo "No route ";
   }
   else{
-    $handlerData = $route->handler;
-    $needsAuth = $handlerData['auth'] ?? false;
-
-    $sessionUserID = $_SESSION['user_id'] ?? null;
-    if($needsAuth && !$sessionUserID )
-    {
-      $response =  new RedirectResponse('/platzi/login');
-    }
-    $harmony = new Harmony($request, new Response());
+        try{
+      $harmony = new Harmony($request, new Response());
     $harmony
     ->addMiddleware(new HttpHandlerRunnerMiddleware(new SapiEmitter()))
+    ->addMiddleware(new WhoopsMiddleware() )
     ->addMiddleware(new AuthenticationMiddleware($routerContainer))
     ->addMiddleware(new Middlewares\AuraRouter($routerContainer))
     ->addMiddleware(new DispatcherMiddleware($container, 'request-handler'));
     $harmony();
-
+    }
+    // catch (Exception $e){
+    //   $emmiter = new SapiEmitter();
+    //   $emmiter->emit(new Response\EmptyResponse(400));
+    // }
+    catch(Error $e)
+    {
+      $emmiter = new SapiEmitter();
+      $emmiter->emit(new Response\EmptyResponse(500));
+    }
   }
 ?>
