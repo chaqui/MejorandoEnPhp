@@ -6,7 +6,7 @@ use Aura\Router\Exception;
 class JobService{
   public function deleteJob($id)
   {
-    $job = Job::where($id);
+    $job = Job::where("idjobs",$id)->first();
     if(!$job){
       throw new Exception("no exciste el Job");
     }
