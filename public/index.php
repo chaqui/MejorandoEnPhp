@@ -122,6 +122,15 @@ $capsule = new Capsule;
     $map->get('loginForm','/platzi/login',[
       'app\Controllers\AuthController',
       'getLogin']);
+
+    $map->get('contactForm','/platzi/contact',[
+      'app\Controllers\ContactController',
+      'index']);
+
+    $map->post('ontactSend','/platzi/contact/send',[
+        'app\Controllers\ContactController',
+        'send']);
+
     $map->post('authLogin','/platzi/auth',[
         'app\Controllers\AuthController',
         'postLogin']);
