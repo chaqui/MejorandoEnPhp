@@ -204,6 +204,7 @@ $capsule = new Capsule;
          */
         catch(Error $e)
         {
+          $log->error($e->getMessage());
           $emmiter = new SapiEmitter();
           $emmiter->emit(new Response\EmptyResponse(500));
         }

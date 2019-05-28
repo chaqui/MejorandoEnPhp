@@ -19,7 +19,8 @@
     "monolog/monolog": "^1.24",
     "vlucas/phpdotenv": "^3.3",
     "robmorgan/phinx": "^0.10.7",
-    "symfony/console": "^4.2"
+    "symfony/console": "^4.2",
+    "swiftmailer/swiftmailer": "^6.0"
   }
 
 }
