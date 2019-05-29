@@ -2,7 +2,7 @@
 namespace app\Controllers;
 
 use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Response\RedirectResponse;
+use app\Models\MessageModel;
 
 class ContactController extends BaseController
 {
@@ -12,23 +12,12 @@ class ContactController extends BaseController
 
   public function send(ServerRequest $request){
     $requestData = $request->getParsedBody();
-    // Create the Transport
-    $transport = (new \Swift_SmtpTransport(getenv("SMTP_HOST"), getenv('SMTP_PORT')))
-    ->setUsername(getenv('SMTP_USER'))
-    ->setPassword(getenv('SMTP_PASS'));
-
-    // Create the Mailer using your created Transport
-    $mailer = new \Swift_Mailer($transport);
-
-    // Create a message
-    $message = (new \Swift_Message('Wonderful Subject'))
-    ->setFrom(['contact@mail.com' => 'John Doe'])
-    ->setTo(['receiver@domain.org', 'other@domain.org' => 'A name'])
-    ->setBody('Hi, you have a message. Name: '.$requestData["Name"]." Email:".$requestData["Email"]. ' Message: '.$requestData["Message"]);
-
-    // Send the message
-    $result = $mailer->send($message);
-    return new RedirectResponse('/platzi/');
+    $message = new MessageModel();
+    $message->name =$requestData["Name"];
+    $message->email = $requestData["Email"];
+    $message->message = $requestData["Message"];
+    $message->send = false;
+    $message->save();
 
   }
 }
